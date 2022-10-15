@@ -1,0 +1,427 @@
+﻿@page "/customOrder"
+
+@using Maqs.Models
+@using Maqs.Modules
+
+@inject MudBlazor.ISnackbar Snackbar
+
+<div class="custom-background">
+
+    <div>
+        <h3 class="custom-header">Custom Order</h3>
+    </div>
+
+    <form>
+         <div class="container">
+            <p class="prompt">
+                At MAD Nature Related we are devoted to accomodating all of our customers custom order requests. You can contact us for a custom order at our Facebook, Instagram, or directly through e-mail at the links below.
+            </p>
+
+            <div  class="photo-gallery">
+                <a href="https://www.facebook.com/madnaturerelated" target="_blank"><img class="icons" src="img/Facebook-logo-blue-circle-large-transparent-png.png" /> </a>
+                <a href="https://www.instagram.com/madnaturerelated/" target="_blank"><img class="icons" src="img/instagram1.png" /></a>
+                <br/>
+            </div>
+                <h1 class="email">MADNatureRelated@gmail.com</h1>
+           
+         </div> 
+       @* <div >
+             <p class="form-header">Please fill out this form and su    bmit. We will get back to you as soon as possible! </p>
+              <br />
+            
+               <label class="label">First Name</label> <input @onchange= "OnFirstNameInput" class="textSpace1" type="text">
+                <label class="label">Last Name</label><input @onchange= "OnLastNameInput"class="textSpace2" type="text">
+                <br />
+
+                <label class="label">Phone Number</label> <input @onchange= "OnPhoneNumberInput"class="textSpace1" style=content: EmailAddress />
+              <label class="label">Email Address</label> <input @onchange= "OnEmailAddressInput" class="textSpace2" style=content: EmailAddress />
+              <br/>
+              <label class="label">Address</label> <input @onchange= "OnAddressInput"class="textSpace1" style=content: EmailAddress />
+              <label class="label">City</label> <input @onchange= "OnCityInput"class="textSpace2" style=content: EmailAddress />
+              <br/>
+              <label class="label">State</label> <input @onchange= "OnStateInput" class="textSpace1" style=content: EmailAddress />
+              <label class="label">Country</label> <input @onchange= "OnCountryInput"class="textSpace2" style=content: EmailAddress />
+              <br/>
+              <label class="label">Zip</label> <input @onchange= "OnZipInput" class="textSpace1" style=content: EmailAddress />
+               <label class="label">Jewelry type</label>
+                <select @onchange= "OnJewelryTypeInput" class="textSpace1" name=" JewleryType " type="text">
+                    <option></option>
+                    <option value="Necklace">Necklace</option>
+                    <option value="Earrings">Earrings</option>
+                    <option value="Ring">Ring</option>
+                    <option value="Bracelet">Bracelet</option>
+                    <option value="Misc">Misc</option>
+                </select>
+
+                <br />
+                <label class="label"> Order Request</label><textarea @onchange= "OnOrderRequestInput" class="textarea" type="text"/>
+                <br/>
+                  @if (!submitted)
+                  {
+                      <MudButton class="submit-btn" @onclick= "() => GetData(userInfo)">Submit</MudButton>
+                  }
+                  else
+                  {
+                      <MudAlert Severity="Severity.Info" NoIcon = "true" ContentAlignment="HorizontalAlignment.Center" style="font-size: 20px;">Thank you!</MudAlert>
+                  }
+
+
+            </div>*@
+           
+             
+
+</form>
+</div>
+
+
+
+@code {
+    bool submitted = false;
+    CustomOrderModel userInfo = new();
+    List<string> errorList = new();
+    string errorMessage = "Errors found. Please enter information into the following fields: ";
+
+    private void OnFirstNameInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.FirstName = (string)changeEvent.Value;
+    }
+
+    private void OnLastNameInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.LastName = (string)changeEvent.Value;
+    }
+
+    private void OnPhoneNumberInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.PhoneNumber = (string)changeEvent.Value;
+    }
+
+    private void OnEmailAddressInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.EmailAddress = (string)changeEvent.Value;
+    }
+
+    private void OnAddressInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.Address = (string)changeEvent.Value;
+    }
+
+    private void OnCityInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.City = (string)changeEvent.Value;
+    }
+
+    private void OnStateInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.State = (string)changeEvent.Value;
+    }
+
+    private void OnCountryInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.Country = (string)changeEvent.Value;
+    }
+
+    private void OnZipInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.Zip = (string)changeEvent.Value;
+    }
+
+    private void OnJewelryTypeInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.JewelryType = (string)changeEvent.Value;
+    }
+
+    private void OnOrderRequestInput(ChangeEventArgs changeEvent)
+    {
+        userInfo.OrderRequest = (string)changeEvent.Value;
+    }
+
+    private void GetData(CustomOrderModel userInfo)
+    {
+
+        if (String.IsNullOrWhiteSpace(userInfo.FirstName))
+        {
+            errorList.Add("First Name");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.LastName))
+        {
+            errorList.Add("Last Name");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.PhoneNumber))
+        {
+            errorList.Add("Phone Number");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.Address))
+        {
+            errorList.Add("Address");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.City))
+        {
+            errorList.Add("City");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.State))
+        {
+            errorList.Add("State");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.Country))
+        {
+            errorList.Add("Country");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.Zip))
+        {
+            errorList.Add("Zip");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.EmailAddress))
+        {
+            errorList.Add("Email Address");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.JewelryType))
+        {
+            errorList.Add("Jewelry Type");
+        }
+        if (String.IsNullOrWhiteSpace(userInfo.OrderRequest))
+        {
+            errorList.Add("Order Request");
+        }
+
+        if(errorList.Count > 0)
+        {
+            string errorMessage = errorList.Count > 1? "Errors found. Please enter information into the following fields: " : "Error found. Please enter information into the following field: ";
+            Snackbar.Add($"{errorList.Count()} {errorMessage}{getErrors()}", Severity.Error);
+            errorList.Clear();
+        }
+
+        else
+        {              
+            DataLayer dl = new();
+            dl.SendCustomOrderEmail(userInfo); 
+            Snackbar.Add("Submitted!", Severity.Info);
+            submitted = true;
+        }
+
+
+    }
+
+    private string getErrors()
+    {
+        string errors = "";
+        for(int i = 0; i < errorList.Count(); i++)
+        {
+            if (i != errorList.Count() - 1)
+            {
+                errors += errorList[i] + ", ";
+            }
+            else
+            {
+                errors += errorList[i];
+            }
+        }
+        errors.Trim(',');
+        return errors;
+    }
+
+
+
+
+}
+
+
+    <style>
+
+
+        .icons{
+            width:50%;
+            height: 50%;
+            margin-top: 10%;
+            display:block;
+            margin-right: auto;
+            margin-left:auto;
+            justify-content:center;
+            border-radius: 10px;
+            grid-gap: 100%;
+            background: transparent;
+            padding: 2px 2px 2px 2px
+        }
+
+        .photo-gallery{
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        display:block;
+        justify-content:center;
+        align-items: center;
+        text-align: center;
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 20px;
+        
+        }
+        .prompt {
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 50px;
+        padding: 10px;
+        display: block;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 18px;
+        opacity: .60;
+        color: black;
+        border-radius: 2px;
+        box-shadow: 1px 1px 3px white;
+        background-color: lightgray;
+        font-weight: bold;
+    }
+
+    .email{
+        text-align: center;
+        font-size: 36px;
+    }
+ 
+    .custom-header {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        border-bottom: 3px solid black;
+        border-top: 3px solid black;
+        text-align: center;
+        background-color: lightgreen;
+        opacity: .9;
+        font-size: 28px;
+    }
+
+    .form-header {
+        margin-right: auto;
+        margin-left: auto;
+        padding: 10px;
+        display: block;
+        text-align: center;
+        font-family: 'Lucida Handwriting';
+        font-size: 18px;
+        font-weight:bold;
+        width: 100%;
+        opacity: .60;
+        color: black;
+        border-radius: 2px;
+        box-shadow: 1px 1px 3px white;
+        background-color: lightgray;
+    }
+
+    #blazor-error-ui {
+        background: lightyellow;
+        bottom: 0;
+        box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+        display: none;
+        left: 0;
+        padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+    }
+
+        #blazor-error-ui .dismiss {
+            cursor: pointer;
+            position: absolute;
+            right: 0.75rem;
+            top: 0.5rem;
+        }
+
+    .container {
+        opacity: .90;
+        border-radius: 10px;
+        box-shadow: 1px 1px 3px white;
+        background-color: lightgreen;
+        margin-top: 20px;
+        margin-left:auto;
+        margin-right:auto;
+        display: block;
+      /*  justify-content:center;
+        display: flexbox;*/
+        width:60%;
+        height: 600px;
+        
+        
+    }
+
+    .custom-background {
+        background-image: url(img/custombackgroundimg.png);
+        background-position: center center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 90%;
+        position: fixed;
+        top: 100px;
+        left: 0;
+        overflow: auto;
+        background-color: white;
+        background-size: cover;
+    }
+    .textSpace1 {
+        display: inline-block;
+        width: 20%;
+        text-align: left;
+        margin-left: 3%;
+        margin-top:2%;
+        font-weight:bold;
+        box-shadow: 1px 2px #008000;
+    }
+
+     .submit-btn {
+        width: 15%;
+        margin-top: 1.5%;
+        margin-right: auto;
+        margin-left: auto;
+        box-shadow: 3px;
+        background-color: #4CAF50; /* Green */
+        border: none;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        font-size: 16px;
+    }
+
+    .textarea{
+        display: inline-block;
+        width: 59%;
+        height: 30%;
+        text-align: left;
+        margin-left: 3%;
+        margin-top:2%;
+        font-weight:bold;
+        box-shadow: 1px 2px #008000;
+    }
+
+    .label{
+          cursor: pointer;
+            display: inline-block;
+            padding: 3px 6px;
+            text-align: right;
+            width: 150px;
+            vertical-align: top;
+            margin-top: 2%;
+            font-weight: bold;
+            font-size: 16px;
+
+    }
+
+      .textSpace2 {
+        display: inline-block;
+        width: 20%;
+        text-align: left;
+        margin-left: 3%;
+        font-weight:bold;
+        box-shadow: 1px 2px #008000;
+        
+    }
+
+    .dropdown {
+            display: inline-block;
+        width: 20%;
+        text-align: left;
+        margin-left: 6%;
+        margin-top:2%;
+        font-weight:bold;
+    }
+</style>

@@ -1,0 +1,280 @@
+﻿@page "/contactUs"
+
+@using Maqs.Models
+@using Maqs.Modules
+@using System.Net.Mail
+@using System.Linq
+@using System.Threading;
+@using MailKit;
+@using MailKit.Net.Smtp;
+
+@inject MudBlazor.ISnackbar Snackbar
+
+
+
+
+@*inject ISnackbar Snackbar*@
+
+
+<div class="contact-background">
+    <div class="contact-header">
+        <h3>Contact us</h3>
+    </div>
+
+    <div class="container">
+        <p class="prompt">
+            M.A.D Nature Creations is dedicated towards customer satisfaction and answering any questions you may have.
+            Please enter a bit of information down below, click submit, and our team will get back to you as quick as possible!
+        </p>
+
+        <div style="" >
+        <a class="social-media" style="text-orientation: sideways-right !important; font-size: 22px" href="https://www.facebook.com/madnaturerelated">Facebook:  @@MADNatureRelated &nbsp  &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp; </a>
+        <a class="social-media" style="text-orientation: sideways-right !important; font-size: 22px" href="https://www.instagram.com/madnaturerelated/">Instagram: @@MADNatureRelated</a>
+        </div>
+
+
+        <div class=contact-border>
+           
+           
+            <form action="GetData" method=post>
+                 <label style="margin-top: 8px; font-size: 24px; font-weight:bold; margin-bottom: 6px;"> Send us an Email!</label>
+                 <br /> 
+                 <label style="font-size: 16px; font-weight:bold">Email Address:</label>
+                 <br/>
+                 <input style="height: 30px; width: 40%; box-shadow: 1px 2px #008000;" type="text" id="emailValue" name="emailValue"  @oninput="OnEmailInput" />
+                 <br />
+                 <label style="font-size: 16px; font-weight:bold">Comments:</label>
+                 <br />
+                 <textarea id="commentValue" type="text" name="commentValue" value="@commentValue" @oninput=OnCommentsInput class="input" style="height: 200px;"/>
+                 <br />
+            </form>
+
+             @if (!submitted)
+            {
+             
+                   <MudButton class="submit-btn" @onclick="() => GetData(emailInfo)">Submit</MudButton>
+            }
+            else
+            {
+               
+                <MudAlert Severity="Severity.Info" NoIcon = "true" ContentAlignment="HorizontalAlignment.Center" Style="font-size:20px;">Thank you!</MudAlert>
+            }
+
+        
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+
+    EmailModel emailInfo = new();
+    DataLayer dl = new();
+    System.Timers.Timer timer = new (interval: 5000);
+    bool submitted = false;
+    List<string> errorList = new();
+
+    private string emailValue = "";
+    private string commentValue = "";
+
+    private void OnEmailInput(ChangeEventArgs changeEvent)
+    {
+        emailInfo.EmailAddress = (string)changeEvent.Value;
+    }
+
+    private void OnCommentsInput(ChangeEventArgs changeEvent)
+    {
+        emailInfo.Comments = (string)changeEvent.Value;
+    }
+
+
+
+
+    private void GetData(EmailModel emailInfo)
+    {
+        if (String.IsNullOrWhiteSpace(emailInfo.EmailAddress))
+        {
+            errorList.Add("Email Address");
+        }
+        if (String.IsNullOrWhiteSpace(emailInfo.Comments))
+        {
+            errorList.Add("Comments");
+        }
+        if(errorList.Count > 0)
+        {
+
+            string errorMessage = errorList.Count > 1? "Errors found. Please enter information into the following fields: " : "Error found. Please enter information into the following field: ";
+            Snackbar.Add($"{errorList.Count()} {errorMessage}{getErrors()}", Severity.Error);
+            errorList.Clear();
+        }
+
+        else
+        {       
+            try
+            {
+                if (!String.IsNullOrWhiteSpace(emailInfo.EmailAddress) && !String.IsNullOrWhiteSpace(emailInfo.Comments) && emailInfo.EmailAddress.Contains("@"))
+                {
+                    DataLayer dl = new();
+                    dl.SendContactEmail(emailInfo);
+                    Snackbar.Add("Submitted!", Severity.Info);
+                    submitted = true;
+                }
+                else
+                {
+                     Snackbar.Add("Please enter in a valid email address", Severity.Error);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        
+        }
+    }
+
+    private string getErrors()
+    {
+        string errors = "";
+        for(int i = 0; i < errorList.Count(); i++)
+        {
+            if (i != errorList.Count() - 1)
+            {
+                errors += errorList[i] + ", ";
+            }
+            else
+            {
+                errors += errorList[i];
+            }
+        }
+        errors.Trim(',');
+        return errors;
+    }
+
+
+}
+
+<style>
+    .contact-header {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        border-bottom: 3px solid black;
+        border-top: 3px solid black;
+        text-align: center;
+        background-color: lightgreen;
+        opacity: .9;
+        font-size:26px;
+    }
+
+    #blazor-error-ui {
+        background: lightyellow;
+        bottom: 0;
+        box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+        display: none;
+        left: 0;
+        padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+    }
+
+        #blazor-error-ui .dismiss {
+            cursor: pointer;
+            position: absolute;
+            right: 0.75rem;
+            top: 0.5rem;
+        }
+    .contact-border{
+        text-align: center;
+        border: 2px solid black;
+        width: 90%;
+        height: 60%;
+        margin-left:auto;
+        margin-right:auto;
+        display:block;
+        margin-top: 6px;
+        border-radius: 8px;
+      
+    }
+
+    .submit-btn {
+        width: 10%;
+        margin-top: 1.5%;
+        /*margin-left:auto;
+        margin-right:auto;
+        display:block;*/
+        justify-content: center;
+        display: -ms-flexbox;
+        box-shadow: 3px;
+        background-color: #4CAF50; /* Green */
+        border: none;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+
+    .contact-background {
+        background-image: url(img/ContactUsImg.png);
+        background-position: center center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 90%;
+        position: fixed;
+        top: 100px;
+        left: 0;
+        overflow: auto;
+        background-color: white;
+        background-size: cover;
+    }
+
+
+    .prompt {
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 50px;
+        padding: 10px;
+        display: block;
+        text-align: center;
+        font-family: 'Lucida Handwriting';
+        font-size: 18px;
+        opacity: .60;
+        color: black;
+        border-radius: 2px;
+        box-shadow: 1px 1px 3px white;
+        background-color: lightgray;
+        font-weight: bold;
+    }
+
+    .social-media
+    {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .container {
+        opacity: .90;
+        border-radius: 10px;
+        box-shadow: 1px 1px 3px white;
+        background-color: lightgreen;
+        width: 70%;
+        height: 95%;
+        margin-right: auto;
+        margin-left: auto;
+        display:block;
+    }
+
+    .input {
+        width: 60%;
+        padding:10px 10px 10px 10px;
+        box-shadow: 1px 2px #008000;
+      
+
+    }
+</style>
+
+
+
